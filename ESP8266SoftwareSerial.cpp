@@ -27,7 +27,7 @@ extern "C" {
 #include "gpio.h"
 }
 
-#include "SoftwareSerial.h"
+#include "ESP8266SoftwareSerial.h"
 
 #define MAX_PIN 15
 
