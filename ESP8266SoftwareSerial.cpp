@@ -310,7 +310,7 @@ void ICACHE_RAM_ATTR ESP8266SoftwareSerial::rxRead() {
 			if (propgateBits(previousBit, pulseBitLength - 1))
 			{
 				// store byte in buffer
-				int next = (m_inPos + 1) % m_buffSize;
+				unsigned int next = (m_inPos + 1) % m_buffSize;
 				if (next != m_outPos) {
 					m_buffer[m_inPos] = m_rec;
 					m_inPos = next;
@@ -341,7 +341,7 @@ void ICACHE_RAM_ATTR ESP8266SoftwareSerial::rxRead() {
 				propgateBits(true, 8);
 
 				// store the byte in the buffer
-				int next = (m_inPos + 1) % m_buffSize;
+				unsigned int next = (m_inPos + 1) % m_buffSize;
 				if (next != m_outPos) {
 					m_buffer[m_inPos] = m_rec;
 					m_inPos = next;
@@ -356,7 +356,7 @@ void ICACHE_RAM_ATTR ESP8266SoftwareSerial::rxRead() {
 				if (propgateBits(previousBit, pulseBitLength))
 				{
 					// Store the received value in the buffer unless we have an overflow
-					int next = (m_inPos + 1) % m_buffSize;
+					unsigned int next = (m_inPos + 1) % m_buffSize;
 					if (next != m_outPos) {
 						m_buffer[m_inPos] = m_rec;
 						m_inPos = next;
@@ -384,7 +384,7 @@ void ICACHE_RAM_ATTR ESP8266SoftwareSerial::rxRead() {
 		// Stop bit
 		WAIT;
 		// Store the received value in the buffer unless we have an overflow
-		int next = (m_inPos + 1) % m_buffSize;
+		unsigned int next = (m_inPos + 1) % m_buffSize;
 		if (next != m_inPos) {
 			m_buffer[m_inPos] = rec;
 			m_inPos = next;
