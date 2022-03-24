@@ -1,6 +1,6 @@
 /*
 
-SoftwareSerial.cpp - Implementation of the Arduino software serial for ESP8266.
+ESP8266SoftwareSerial.cpp - Implementation of the Arduino software serial for ESP8266.
 Copyright (c) 2015-2016 Peter Lerup. All rights reserved.
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ extern "C" {
 
 // As the Arduino attachInterrupt has no parameter, lists of objects
 // and callbacks corresponding to each possible GPIO pins have to be defined
-SoftwareSerial *ObjList[MAX_PIN + 1];
+ESP8266SoftwareSerial *ObjList[MAX_PIN + 1];
 
 void ICACHE_RAM_ATTR sws_isr_0() { ObjList[0]->rxRead(); };
 void ICACHE_RAM_ATTR sws_isr_1() { ObjList[1]->rxRead(); };
@@ -68,7 +68,7 @@ static void(*ISRList[MAX_PIN + 1])() = {
 	  sws_isr_15
 };
 
-SoftwareSerial::SoftwareSerial(int receivePin, int transmitPin, bool inverse_logic, unsigned int buffSize, bool edge_triggered) {
+ESP8266SoftwareSerial::ESP8266SoftwareSerial(int receivePin, int transmitPin, bool inverse_logic, unsigned int buffSize, bool edge_triggered) {
 	m_oneWire = (receivePin == transmitPin);
 	m_rxValid = m_txValid = m_txEnableValid = false;
 	m_buffer = NULL;
@@ -99,7 +99,7 @@ SoftwareSerial::SoftwareSerial(int receivePin, int transmitPin, bool inverse_log
 	begin(9600);
 }
 
-SoftwareSerial::~SoftwareSerial() {
+ESP8266SoftwareSerial::~ESP8266SoftwareSerial() {
 	enableRx(false);
 	if (m_rxValid)
 		ObjList[m_rxPin] = NULL;
@@ -107,11 +107,11 @@ SoftwareSerial::~SoftwareSerial() {
 		free(m_buffer);
 }
 
-bool SoftwareSerial::isValidGPIOpin(int pin) {
+bool ESP8266SoftwareSerial::isValidGPIOpin(int pin) {
 	return (pin >= 0 && pin <= 5) || (pin >= 12 && pin <= MAX_PIN);
 }
 
-void SoftwareSerial::begin(long speed) {
+void ESP8266SoftwareSerial::begin(long speed) {
 	// Use getCycleCount() loop to get as exact timing as possible
 	m_bitTime = F_CPU / speed;
 	// By default enable interrupt during tx only for low speed
@@ -121,11 +121,11 @@ void SoftwareSerial::begin(long speed) {
 		enableRx(true);
 }
 
-long SoftwareSerial::baudRate() {
+long ESP8266SoftwareSerial::baudRate() {
 	return F_CPU / m_bitTime;
 }
 
-void SoftwareSerial::setTransmitEnablePin(int transmitEnablePin) {
+void ESP8266SoftwareSerial::setTransmitEnablePin(int transmitEnablePin) {
 	if (isValidGPIOpin(transmitEnablePin)) {
 		m_txEnableValid = true;
 		m_txEnablePin = transmitEnablePin;
@@ -137,11 +137,11 @@ void SoftwareSerial::setTransmitEnablePin(int transmitEnablePin) {
 	}
 }
 
-void SoftwareSerial::enableIntTx(bool on) {
+void ESP8266SoftwareSerial::enableIntTx(bool on) {
 	m_intTxEnabled = on;
 }
 
-void SoftwareSerial::enableTx(bool on) {
+void ESP8266SoftwareSerial::enableTx(bool on) {
 	if (m_oneWire && m_txValid) {
 		if (on) {
 			enableRx(false);
@@ -157,7 +157,7 @@ void SoftwareSerial::enableTx(bool on) {
 	}
 }
 
-void SoftwareSerial::enableRx(bool on) {
+void ESP8266SoftwareSerial::enableRx(bool on) {
 	if (m_rxValid) {
 		if (on) {
 			if (m_edge)
@@ -171,14 +171,14 @@ void SoftwareSerial::enableRx(bool on) {
 	}
 }
 
-int SoftwareSerial::read() {
+int ESP8266SoftwareSerial::read() {
 	if (!m_rxValid || (m_inPos == m_outPos)) return -1;
 	uint8_t ch = m_buffer[m_outPos];
 	m_outPos = (m_outPos + 1) % m_buffSize;
 	return ch;
 }
 
-int SoftwareSerial::available() {
+int ESP8266SoftwareSerial::available() {
 	if (!m_rxValid) return 0;
 	int avail = m_inPos - m_outPos;
 	if (avail < 0) avail += m_buffSize;
@@ -187,7 +187,7 @@ int SoftwareSerial::available() {
 
 #define WAIT { while (ESP.getCycleCount()-start < wait) if (m_intTxEnabled) optimistic_yield(1); wait += m_bitTime; }
 
-size_t SoftwareSerial::write(uint8_t b) {
+size_t ESP8266SoftwareSerial::write(uint8_t b) {
 	if (!m_txValid) return 0;
 
 	if (m_invert) b = ~b;
@@ -215,22 +215,22 @@ size_t SoftwareSerial::write(uint8_t b) {
 	return 1;
 }
 
-void SoftwareSerial::flush() {
+void ESP8266SoftwareSerial::flush() {
 	m_inPos = m_outPos = 0;
 }
 
-bool SoftwareSerial::overflow() {
+bool ESP8266SoftwareSerial::overflow() {
 	bool res = m_overflow;
 	m_overflow = false;
 	return res;
 }
 
-int SoftwareSerial::peek() {
+int ESP8266SoftwareSerial::peek() {
 	if (!m_rxValid || (m_inPos == m_outPos)) return -1;
 	return m_buffer[m_outPos];
 }
 
-inline bool SoftwareSerial::propgateBits(bool level, int pulseBitLength)
+inline bool ESP8266SoftwareSerial::propgateBits(bool level, int pulseBitLength)
 {
 	for (int i = 0; i < pulseBitLength; i++)
 	{
@@ -247,12 +247,12 @@ inline bool SoftwareSerial::propgateBits(bool level, int pulseBitLength)
 	return false;
 }
 
-inline void SoftwareSerial::setWaitingForStart()
+inline void ESP8266SoftwareSerial::setWaitingForStart()
 {
 	m_getByteState = awaitingStart;
 }
 
-inline void SoftwareSerial::setStartBit(unsigned long start)
+inline void ESP8266SoftwareSerial::setStartBit(unsigned long start)
 {
 	// mark - the start of a pulse
 	// set the timers and wait for the next pulse
@@ -263,7 +263,7 @@ inline void SoftwareSerial::setStartBit(unsigned long start)
 	m_getByteState = gotStart;
 }
 
-void ICACHE_RAM_ATTR SoftwareSerial::rxRead() {
+void ICACHE_RAM_ATTR ESP8266SoftwareSerial::rxRead() {
 	// Advance the starting point for the samples but compensate for the
 	// initial delay which occurs before the interrupt is delivered
 	unsigned long wait = m_bitTime + m_bitTime / 3 - 500;

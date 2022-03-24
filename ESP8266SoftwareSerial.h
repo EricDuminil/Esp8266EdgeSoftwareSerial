@@ -1,7 +1,7 @@
 /*
-SoftwareSerial.h
+ESP8266SoftwareSerial.h
 
-SoftwareSerial.cpp - Implementation of the Arduino software serial for ESP8266.
+ESP8266SoftwareSerial.cpp - Implementation of the Arduino software serial for ESP8266.
 Copyright (c) 2015-2016 Peter Lerup. All rights reserved.
 
 This library is free software; you can redistribute it and/or
@@ -20,8 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-#ifndef SoftwareSerial_h
-#define SoftwareSerial_h
+#ifndef ESP8266SoftwareSerial_h
+#define ESP8266SoftwareSerial_h
 
 #include <inttypes.h>
 #include <Stream.h>
@@ -32,10 +32,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Speed up to 115200 can be used.
 
 
-class SoftwareSerial : public Stream {
+class ESP8266SoftwareSerial : public Stream {
 public:
-  SoftwareSerial(int receivePin, int transmitPin, bool inverse_logic = false, unsigned int buffSize = 64, bool edge_triggered = false);
-  virtual ~SoftwareSerial();
+  ESP8266SoftwareSerial(int receivePin, int transmitPin, bool inverse_logic = false, unsigned int buffSize = 64, bool edge_triggered = false);
+  virtual ~ESP8266SoftwareSerial();
 
   void begin(long speed);
   long baudRate();
